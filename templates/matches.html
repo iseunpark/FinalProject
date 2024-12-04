@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Page title -->
+    <title>Today's Matches</title>
+    <!-- Link to external stylesheet -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Main page heading -->
+    <h1>Today's Matches</h1>
+    <!-- Navigation link to homepage -->
+    <p><a href="/">Return to Homepage</a></p>
+    
+    <!-- Match schedule table -->
+    <table>
+        <!-- Table header section -->
+        <thead>
+            <tr>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <!-- Table body with dynamic match data -->
+        <tbody>
+            {% for match in matches %}
+                <tr>
+                    <!-- Home team cell with logo and link -->
+                    <td>
+                        <a href="/team/{{ match.homeTeamId }}">
+                            <img src="{{ match.homeTeamCrest }}" alt="{{ match.homeTeam }} logo" height="30">
+                            {{ match.homeTeam }}
+                        </a>
+                    </td>
+                    <!-- Away team cell with logo and link -->
+                    <td>
+                        <a href="/team/{{ match.awayTeamId }}">
+                            <img src="{{ match.awayTeamCrest }}" alt="{{ match.awayTeam }} logo" height="30">
+                            {{ match.awayTeam }}
+                        </a>
+                    </td>
+                    <!-- Match time -->
+                    <td>{{ match.formattedTime }}</td>
+                    <!-- Match status -->
+                    <td>{{ match.status }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Footer navigation link -->
+    <p><a href="/">Return to Homepage</a></p>
+</body>
+</html>

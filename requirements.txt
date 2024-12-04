@@ -1,0 +1,24 @@
+# Web Framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+
+# Template Engine
+jinja2>=3.1.2
+
+# HTTP Client
+requests>=2.31.0
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# OpenAI Integration
+openai>=1.3.0
+
+# Static File Serving
+aiofiles>=23.2.1
+
+# Data Validation
+pydantic>=2.4.2
+
+# CORS Middleware
+python-multipart>=0.0.6

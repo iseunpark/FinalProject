@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Page title with dynamic team name -->
+    <title>{{ team.name }} Details</title>
+    <!-- Link to external stylesheet -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Main page heading with team name -->
+    <h1>{{ team.name }} Details</h1>
+    <!-- Navigation link back to teams list -->
+    <p><a href="/premier-league-teams">Return to Premier League Teams</a></p>
+
+    <!-- Team details table -->
+    <table>
+        <!-- Basic team information rows -->
+        <tr>
+            <th>Name</th>
+            <td>{{ team.name }}</td>
+        </tr>
+        <tr>
+            <th>Short Name</th>
+            <td>{{ team.shortName }}</td>
+        </tr>
+        <tr>
+            <th>TLA</th>
+            <td>{{ team.tla }}</td>
+        </tr>
+        <tr>
+            <th>Venue</th>
+            <td>{{ team.venue }}</td>
+        </tr>
+        <tr>
+            <th>Website</th>
+            <td><a href="{{ team.website }}" target="_blank">{{ team.website }}</a></td>
+        </tr>
+        <tr>
+            <th>Crest</th>
+            <td><img src="{{ team.crest }}" alt="{{ team.name }} logo"></td>
+        </tr>
+    </table>
+
+    <!-- Team squad section -->
+    <h2>Squad</h2>
+    <table>
+        <!-- Squad table header -->
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Date of Birth</th>
+                <th>Nationality</th>
+            </tr>
+        </thead>
+        <!-- Squad table body with player data -->
+        <tbody>
+            {% for player in squad %}
+                <tr>
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.position or 'N/A' }}</td>
+                    <td>{{ player.dateOfBirth }}</td>
+                    <td>{{ player.nationality }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Chatbot interface container -->
+    <div class="chatbot-container">
+        <h2>Chat with our Assistant</h2>
+        <div id="chatbox">
+            <!-- Chat history display area -->
+            <div id="chat-history"></div>
+            <!-- Chat input form -->
+            <form id="chat-form">
+                <input type="text" id="user-message" placeholder="Ask me anything..." required />
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chatbot functionality JavaScript -->
+    <script>
+        // Get DOM elements
+        const form = document.getElementById("chat-form");
+        const chatHistory = document.getElementById("chat-history");
+
+        // Add submit event listener to chat form
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Get user message
+            const userMessage = document.getElementById("user-message").value;
+
+            // Create and display user message bubble
+            const userBubble = document.createElement("div");
+            userBubble.textContent = userMessage;
+            userBubble.className = "user-message";
+            chatHistory.appendChild(userBubble);
+
+            // Clear input field
+            document.getElementById("user-message").value = "";
+
+            try {
+                const response = await fetch("/chatbot", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userMessage }),
+                });
+
+                // Check response status
+                if (!response.ok) {
+                    throw new Error("Failed to fetch chatbot response");
+                }
+
+                const data = await response.json();
+
+                // Create and display bot response bubble
+                const botBubble = document.createElement("div");
+                botBubble.textContent = data.response;
+                botBubble.className = "bot-message";
+                chatHistory.appendChild(botBubble);
+
+                // Auto-scroll to latest message
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            } catch (error) {
+                // Error handling
+                console.error("Error communicating with chatbot:", error);
+
+                // Display error message to user
+                const errorBubble = document.createElement("div");
+                errorBubble.textContent = "Chatbot is currently unavailable. Please try again later.";
+                errorBubble.className = "bot-message";
+                errorBubble.style.color = "red";
+                chatHistory.appendChild(errorBubble);
+            }
+        });
+    </script>
+</body>
+</html>

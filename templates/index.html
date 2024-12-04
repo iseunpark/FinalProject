@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for character encoding and responsive viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <!-- Link to external stylesheet -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Main page title -->
+    <h1>Welcome to the Football Matches App</h1>
+
+    <!-- Search functionality with centered form -->
+    <div class="search-container">
+        <form action="/search" method="get">
+            <input type="text" name="team_name" placeholder="Search for a team..." required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- Navigation links -->
+    <p>Check out Today's <a href="/matches">Matches</a>.</p>
+    <p>View all <a href="/premier-league-teams">Premier League Teams</a>.</p>
+    
+    <!-- Upcoming matches display table -->
+    <h2>Upcoming Matches</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for match in upcoming_matches %}
+                <tr>
+                    <td>{{ match.utcDate }}</td>
+                    <td>{{ match.homeTeam.name }}</td>
+                    <td>{{ match.awayTeam.name }}</td>
+                    <td>{{ match.status }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Chatbot interface container -->
+    <div class="chatbot-container">
+        <h2>Chat with our Assistant</h2>
+        <div id="chatbox">
+            <!-- Chat history display area -->
+            <div id="chat-history"></div>
+            <!-- Chat input form -->
+            <form id="chat-form">
+                <input type="text" id="user-message" placeholder="Ask me anything..." required />
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chatbot functionality JavaScript -->
+    <script>
+        // Get DOM elements
+        const form = document.getElementById("chat-form");
+        const chatHistory = document.getElementById("chat-history");
+
+        // Add submit event listener to chat form
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Get user message
+            const userMessage = document.getElementById("user-message").value;
+
+            // Create and display user message bubble
+            const userBubble = document.createElement("div");
+            userBubble.textContent = userMessage;
+            userBubble.className = "user-message";
+            chatHistory.appendChild(userBubble);
+
+            // Clear input field
+            document.getElementById("user-message").value = "";
+
+            try {
+                // Send POST request to backend chatbot endpoint
+                const response = await fetch("/chatbot", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userMessage }),
+                });
+
+                // Check response status
+                if (!response.ok) {
+                    throw new Error("Failed to fetch chatbot response");
+                }
+
+                const data = await response.json();
+
+                // Create and display bot response bubble
+                const botBubble = document.createElement("div");
+                botBubble.textContent = data.response;
+                botBubble.className = "bot-message";
+                chatHistory.appendChild(botBubble);
+
+                // Auto-scroll to latest message
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            } catch (error) {
+                // Error handling
+                console.error("Error communicating with chatbot:", error);
+
+                // Display error message to user
+                const errorBubble = document.createElement("div");
+                errorBubble.textContent = "Chatbot is currently unavailable. Please try again later.";
+                errorBubble.className = "bot-message";
+                errorBubble.style.color = "red";
+                chatHistory.appendChild(errorBubble);
+            }
+        });
+    </script>
+</body>
+</html>

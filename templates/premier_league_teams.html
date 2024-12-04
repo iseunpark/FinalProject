@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Page title -->
+    <title>Premier League Teams</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Main page heading -->
+    <h1>Premier League Teams</h1>
+    <!-- Navigation link to homepage -->
+    <p><a href="/">Return to Homepage</a></p>
+
+    <!-- Teams information table -->
+    <table>
+        <!-- Table header section -->
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Short Name</th>
+                <th>TLA</th>
+                <th>Venue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for team in teams %}
+                <tr>
+                    <!-- Team name cell with logo and link to team details -->
+                    <td>
+                        <a href="/team/{{ team.id }}">
+                            <img src="{{ team.crest }}" alt="{{ team.name }} logo" height="30">
+                            {{ team.name }}
+                        </a>
+                    </td>
+                    <td>{{ team.shortName }}</td>
+                    <td>{{ team.tla }}</td>
+                    <td>{{ team.venue }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Footer navigation link -->
+    <p><a href="/">Return to Homepage</a></p>
+</body>
+</html>
